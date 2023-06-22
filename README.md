@@ -127,3 +127,96 @@ MYSQL_DBNAME=toolingdb
 
 ![](./img/6.done.jpg)
 
+
+## Containerizing our Tooling application
+
+Make sure you have checked out your Tooling repo to your machine with Docker engine
+
+First, we need to build the Docker image the tooling app will use. The Tooling repo you cloned above has a Dockerfile for this purpose. Explore it and make sure you understand the code inside it.
+Run docker build command
+
+Launch the container with docker run
+
+Try to access your application via port exposed from a container
+
+![](./img/7.todo-complete.jpg)
+![](./img/8.dockerhub.jpg)
+#
+
+## PRACTICE TASK 
+#
+**[Code Containing Jenkinsfile and Dockerfile](https://github.com/Micah-Shallom/php-todo-proj20.git)**
+#
+## Practice Task №1 – Implement a POC to migrate the PHP-Todo app into a containerized application.
+
+Download php-todo from repository 
+
+The project below will challenge you a little bit, but the experience there is very valuable for future projects.
+
+### Part 1
+- Write a Dockerfile for the TODO app
+- Run both database and app on your laptop Docker Engine
+- Access the application from the browser
+
+### Part 2
+- Create an account in Docker Hub
+- Create a new Docker Hub repository
+- Push the docker images from your PC to the repository
+
+### Part 3
+- Write a Jenkinsfile that will simulate a Docker Build and a Docker Push to the registry
+- Connect your repo to Jenkins
+- Create a multi-branch pipeline
+- Simulate a CI pipeline from a feature and master branch using previously created Jenkinsfile
+- Ensure that the tagged images from your Jenkinsfile have a prefix that suggests which branch the image was pushed from. For example, feature-0.0.1.
+- Verify that the images pushed from the CI can be found at the registry.
+![](./img/9.complete.jpg)
+#
+
+## Deployment with Docker Compose
+
+In this section, we will refactor the Tooling app POC so that we can leverage the power of Docker Compose.
+
+First, install Docker Compose on your workstation from here
+
+Create a file, name it tooling.yaml
+
+Begin to write the Docker Compose definitions with YAML syntax. The YAML file is used for defining services, networks, and volumes:
+
+```
+version: "3.9"
+services:
+  tooling_frontend:
+    build: .
+    ports:
+      - "5000:80"
+    volumes:
+      - tooling_frontend:/var/www/html
+    links:
+      - db
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: <The database name required by Tooling app>
+      MYSQL_USER: <The user required by Tooling app>
+      MYSQL_PASSWORD: <The password required by Tooling app>
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+      - db:/var/lib/mysql
+volumes:
+  tooling_frontend:
+  db:
+```
+
+Run the command to start the containers
+
+`docker-compose -f tooling.yaml  up -d `
+
+![](./img/10.dc.jpg)
+
+## Practice Task №2 – Complete Continous Integration With A Test Stage
+
+ The Jenkinsfile has been updated with a smoke test phase that tests our application endpoint and returns a status 200
+ 
+![](./img/9.complete.jpg)
